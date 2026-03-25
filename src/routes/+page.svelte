@@ -1,70 +1,88 @@
 <script lang="ts">
 	let { data } = $props();
+	let session = $derived(data.session);
 </script>
 
-<svelte:head>
-	<title>Gym Anatomy Tracker</title>
-</svelte:head>
-
-{#if data.session}
-	<div class="mx-auto max-w-7xl px-4 py-12 text-center">
-		<p class="text-zinc-400">Redirecting to dashboard...</p>
+<div class="flex min-h-[80vh] flex-col items-center justify-center px-4 text-center">
+	<div class="mb-6 rounded-2xl bg-brand-100 p-5">
+		<svg class="h-14 w-14 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+			<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+			<circle cx="12" cy="10" r="3" />
+		</svg>
 	</div>
-	<script>
-		window.location.href = '/dashboard';
-	</script>
-{:else}
-	<div class="relative">
-		<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-950/40 via-zinc-950 to-zinc-950"></div>
 
-		<div class="mx-auto max-w-5xl px-4 py-24 text-center">
-			<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-4 py-1.5 text-sm text-zinc-400">
-				<span class="h-2 w-2 rounded-full bg-brand-500"></span>
-				Interactive 3D Muscle Anatomy
+	<h1 class="mb-3 text-4xl font-bold tracking-tight text-warm-800">
+		Your places, organized
+	</h1>
+	<p class="mb-8 max-w-md text-lg leading-relaxed text-warm-500">
+		Import saved places from Google Maps, tag them freely, and find exactly what you need. No folders. No clutter.
+	</p>
+
+	{#if session}
+		<div class="flex gap-3">
+			<a
+				href="/places"
+				class="rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md"
+			>
+				Open My Places
+			</a>
+			<a
+				href="/upload"
+				class="rounded-xl border border-warm-300 bg-warm-50 px-6 py-3 text-sm font-bold text-warm-700 shadow-sm transition-all hover:bg-warm-100"
+			>
+				Upload CSV
+			</a>
+		</div>
+	{:else}
+		<div class="flex gap-3">
+			<a
+				href="/login"
+				class="rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md"
+			>
+				Get Started
+			</a>
+			<a
+				href="/login"
+				class="rounded-xl border border-warm-300 bg-warm-50 px-6 py-3 text-sm font-bold text-warm-700 shadow-sm transition-all hover:bg-warm-100"
+			>
+				Sign In
+			</a>
+		</div>
+	{/if}
+
+	<div class="mt-16 grid max-w-2xl grid-cols-1 gap-5 sm:grid-cols-3">
+		<div class="rounded-xl border border-warm-200 bg-warm-50 p-5 text-left">
+			<div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sage-200 text-sage-700">
+				<svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+					<polyline points="17 8 12 3 7 8" />
+					<line x1="12" y1="3" x2="12" y2="15" />
+				</svg>
 			</div>
+			<h3 class="mb-1 text-sm font-bold text-warm-800">Import</h3>
+			<p class="text-xs leading-relaxed text-warm-500">Upload CSV files from Google Takeout with one drag.</p>
+		</div>
 
-			<h1 class="text-4xl font-extrabold tracking-tight text-zinc-50 sm:text-6xl">
-				Your Gym Diary.<br />
-				<span class="text-brand-400">Anatomy First.</span>
-			</h1>
-
-			<p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400">
-				Explore muscle groups in 3D, log every set, track progress photos, and learn the anatomy behind every lift.
-				Built for lifters and coaches who care about the details.
-			</p>
-			<p class="mx-auto mt-2 max-w-2xl text-base text-zinc-500">
-				探索3D肌肉解剖圖，記錄每一組訓練，追蹤進度照片。為重視細節的健身者和教練打造。
-			</p>
-
-			<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-				<a
-					href="/auth/signup"
-					class="rounded-xl bg-brand-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-500"
-				>
-					Get Started Free
-				</a>
-				<a
-					href="/anatomy"
-					class="rounded-xl border border-zinc-700 px-8 py-3 text-sm font-medium text-zinc-300 transition hover:border-zinc-600 hover:text-zinc-100"
-				>
-					Explore Anatomy
-				</a>
+		<div class="rounded-xl border border-warm-200 bg-warm-50 p-5 text-left">
+			<div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-brand-100 text-brand-700">
+				<svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+					<line x1="7" y1="7" x2="7.01" y2="7" />
+				</svg>
 			</div>
+			<h3 class="mb-1 text-sm font-bold text-warm-800">Tag</h3>
+			<p class="text-xs leading-relaxed text-warm-500">Add flexible tags to organize places your way, like Notion.</p>
+		</div>
 
-			<div class="mt-20 grid gap-6 sm:grid-cols-3">
-				{#each [
-					{ icon: '◉', title: '3D Anatomy Explorer', titleZh: '3D解剖探索', desc: 'Interactive muscle map with English & Chinese labels. Click any muscle to see related exercises.' },
-					{ icon: '📋', title: 'Workout Logging', titleZh: '訓練記錄', desc: 'Log sets, reps, weight, and RPE. See which muscles each exercise targets in real time.' },
-					{ icon: '📷', title: 'Progress Photos', titleZh: '進度照片', desc: 'Upload and organize your transformation photos with a visual timeline.' },
-				] as feature}
-					<div class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 text-left">
-						<div class="mb-3 text-2xl">{feature.icon}</div>
-						<h3 class="font-semibold text-zinc-100">{feature.title}</h3>
-						<p class="text-xs text-zinc-500">{feature.titleZh}</p>
-						<p class="mt-2 text-sm leading-relaxed text-zinc-400">{feature.desc}</p>
-					</div>
-				{/each}
+		<div class="rounded-xl border border-warm-200 bg-warm-50 p-5 text-left">
+			<div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sage-200 text-sage-700">
+				<svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="11" cy="11" r="8" />
+					<line x1="21" y1="21" x2="16.65" y2="16.65" />
+				</svg>
 			</div>
+			<h3 class="mb-1 text-sm font-bold text-warm-800">Find</h3>
+			<p class="text-xs leading-relaxed text-warm-500">Search across names, tags, areas, and descriptions instantly.</p>
 		</div>
 	</div>
-{/if}
+</div>

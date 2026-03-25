@@ -1,22 +1,165 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+:root {
+	--safe-top: env(safe-area-inset-top, 0px);
+	--safe-bottom: env(safe-area-inset-bottom, 0px);
+	--safe-left: env(safe-area-inset-left, 0px);
+	--safe-right: env(safe-area-inset-right, 0px);
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: transparent;
+}
+
+body {
+	overscroll-behavior-y: none;
+	-webkit-overflow-scrolling: touch;
+}
+
+button,
+a,
+[role='button'] {
+	touch-action: manipulation;
+}
+
+.animate-in {
+	animation: toast-in 0.25s ease-out;
+}
+
+@keyframes toast-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+	body {
+		padding-top: var(--safe-top);
+		padding-bottom: var(--safe-bottom);
+		padding-left: var(--safe-left);
+		padding-right: var(--safe-right);
+	}
+}
+
+/* ---- Map markers ---- */
+
+.map-marker {
+	cursor: pointer;
+	color: var(--color-brand-500);
+	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+	transition: color 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+	transform-origin: bottom center;
+	line-height: 0;
+}
+
+.map-marker:hover {
+	color: var(--color-brand-600);
+	transform: scale(1.15);
+	z-index: 10 !important;
+}
+
+.map-marker--selected {
+	color: var(--color-brand-700);
+	transform: scale(1.35);
+	z-index: 20 !important;
+	filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* ---- Geolocate control ---- */
+
+.maplibregl-ctrl-geolocate {
+	background: white !important;
+	border-radius: 8px !important;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%235a5042' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2m0 16v2M2 12h2m16 0h2'/%3E%3C/svg%3E") !important;
+}
+
+.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%23a8935f' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2m0 16v2M2 12h2m16 0h2'/%3E%3C/svg%3E") !important;
+}
+
+.maplibregl-user-location-dot {
+	background-color: var(--color-brand-500) !important;
+	box-shadow: 0 0 0 3px rgba(168, 147, 95, 0.3) !important;
+}
+
+.maplibregl-user-location-dot::before {
+	background-color: var(--color-brand-400) !important;
+}
+
+/* ---- Map popups ---- */
+
+.map-popup-warm .maplibregl-popup-content {
+	font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+	border-radius: 12px;
+	padding: 10px 14px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--color-warm-200);
+}
+
+.map-popup-warm .maplibregl-popup-tip {
+	border-top-color: white;
+}
+
+.map-popup-title {
+	font-weight: 800;
+	font-size: 13px;
+	color: var(--color-warm-800);
+	line-height: 1.3;
+}
+
+.map-popup-meta {
+	font-size: 11px;
+	color: var(--color-warm-500);
+	margin-top: 2px;
+}
+
+.map-popup-rating {
+	font-size: 11px;
+	color: var(--color-brand-500);
+	margin-top: 2px;
+	font-weight: 700;
+}
 
 @theme {
-	--color-brand-50: #eef6ff;
-	--color-brand-100: #d9eaff;
-	--color-brand-200: #bcdaff;
-	--color-brand-300: #8ec3ff;
-	--color-brand-400: #59a2ff;
-	--color-brand-500: #3381fc;
-	--color-brand-600: #1d62f1;
-	--color-brand-700: #154dde;
-	--color-brand-800: #183fb4;
-	--color-brand-900: #19398e;
-	--color-brand-950: #142456;
-
-	--color-surface-50: #fafafa;
-	--color-surface-100: #f4f4f5;
-	--color-surface-800: #27272a;
-	--color-surface-850: #1e1e21;
-	--color-surface-900: #18181b;
-	--color-surface-950: #09090b;
+	--font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+	--color-brand-50: #f9f6f1;
+	--color-brand-100: #f0ead9;
+	--color-brand-200: #e2d6be;
+	--color-brand-300: #d0c09c;
+	--color-brand-400: #bda87a;
+	--color-brand-500: #a8935f;
+	--color-brand-600: #917e4e;
+	--color-brand-700: #776841;
+	--color-brand-800: #5e5234;
+	--color-brand-900: #4a412a;
+	--color-sage-50: #f2f4ef;
+	--color-sage-100: #eaece5;
+	--color-sage-200: #d6dbc8;
+	--color-sage-300: #b8c1a8;
+	--color-sage-400: #98a485;
+	--color-sage-500: #7c8a6a;
+	--color-sage-600: #617054;
+	--color-sage-700: #4c5842;
+	--color-sage-800: #3c4535;
+	--color-sage-900: #2f362a;
+	--color-warm-50: #faf9f7;
+	--color-warm-100: #f3efe8;
+	--color-warm-200: #e8e1d4;
+	--color-warm-300: #d5cab8;
+	--color-warm-400: #b5a892;
+	--color-warm-500: #978a74;
+	--color-warm-600: #7a6e5a;
+	--color-warm-700: #5a5042;
+	--color-warm-800: #3b332a;
+	--color-warm-900: #28221c;
 }

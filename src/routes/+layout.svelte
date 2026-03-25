@@ -1,106 +1,137 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { invalidate } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import type { Snippet } from 'svelte';
 	import '../app.css';
+	import { invalidate, goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import AddPlaceModal from '$lib/components/AddPlaceModal.svelte';
 
-	interface Props {
-		data: import('./$types').LayoutData;
-		children: Snippet;
+	let { data, children } = $props();
+
+	let supabase = $derived(data.supabase);
+	let session = $derived(data.session);
+	let showAddModal = $state(false);
+
+	const REFRESH_MARGIN_MS = 5 * 60 * 1000; // refresh 5 min before expiry
+
+	function scheduleTokenRefresh(expiresAt: number | undefined) {
+		if (!expiresAt) return undefined;
+		const msUntilExpiry = expiresAt * 1000 - Date.now();
+		const delay = Math.max(msUntilExpiry - REFRESH_MARGIN_MS, 0);
+		return setTimeout(async () => {
+			const { error } = await supabase.auth.refreshSession();
+			if (error) {
+				// Refresh failed — session may have been revoked server-side
+				goto('/login');
+			}
+		}, delay);
 	}
 
-	let { data, children }: Props = $props();
-	let { supabase, session } = $derived(data);
-	let mobileMenuOpen = $state(false);
-
 	onMount(() => {
-		const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+		let refreshTimer = scheduleTokenRefresh(session?.expires_at);
+
+		const {
+			data: { subscription }
+		} = supabase.auth.onAuthStateChange((event, newSession) => {
+			if (event === 'SIGNED_OUT') {
+				clearTimeout(refreshTimer);
+				invalidate('supabase:auth');
+				return;
+			}
+
 			if (newSession?.expires_at !== session?.expires_at) {
+				clearTimeout(refreshTimer);
+				refreshTimer = scheduleTokenRefresh(newSession?.expires_at);
 				invalidate('supabase:auth');
 			}
 		});
-		return () => subscription.unsubscribe();
+
+		function handleVisibilityChange() {
+			if (document.visibilityState !== 'visible') return;
+
+			supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+				if (!currentSession) {
+					invalidate('supabase:auth');
+					return;
+				}
+
+				const expiresAt = currentSession.expires_at ?? 0;
+				const isNearExpiry = expiresAt * 1000 - Date.now() < REFRESH_MARGIN_MS;
+				if (isNearExpiry) {
+					supabase.auth.refreshSession();
+				}
+			});
+		}
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () => {
+			clearTimeout(refreshTimer);
+			subscription.unsubscribe();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
 	});
 
-	const navLinks = [
-		{ href: '/dashboard', label: 'Dashboard', icon: '◫' },
-		{ href: '/anatomy', label: 'Anatomy', icon: '◉' },
-		{ href: '/exercises', label: 'Exercises', icon: '⚡' },
-		{ href: '/workouts', label: 'Workouts', icon: '📋' },
-		{ href: '/photos', label: 'Photos', icon: '📷' },
-	];
-
-	let currentPath = $derived($page.url.pathname);
+	async function handleSignOut() {
+		await supabase.auth.signOut();
+		goto('/login');
+	}
 </script>
 
-<div class="flex min-h-screen flex-col">
-	<header class="sticky top-0 z-50 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-xl">
-		<div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
-			<a href={session ? '/dashboard' : '/'} class="flex items-center gap-2">
-				<span class="text-lg font-bold tracking-tight text-brand-400">💪 GymAnatomy</span>
+<svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
+		rel="stylesheet"
+	/>
+	<title>MapOrganizer</title>
+</svelte:head>
+
+<div class="min-h-[100dvh] bg-sage-100 font-sans">
+	<nav class="sticky top-0 z-30 border-b border-warm-200/60 bg-warm-50/85 backdrop-blur-lg">
+		<div class="mx-auto flex h-12 max-w-[1400px] items-center justify-between px-3 sm:h-14 sm:px-6">
+			<a href={session ? '/places' : '/'} class="flex items-center gap-1.5 text-base font-extrabold text-warm-800 sm:gap-2 sm:text-lg">
+				<svg class="h-5 w-5 text-brand-600 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+					<circle cx="12" cy="10" r="3" />
+				</svg>
+				MapOrganizer
 			</a>
 
-			{#if session}
-				<nav class="hidden items-center gap-1 md:flex">
-					{#each navLinks as link}
-						<a
-							href={link.href}
-							class="rounded-lg px-3 py-1.5 text-sm font-medium transition {currentPath.startsWith(link.href) ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}"
-						>
-							{link.label}
-						</a>
-					{/each}
-				</nav>
-
-				<div class="flex items-center gap-3">
-					<a href="/profile" class="hidden text-sm text-zinc-400 hover:text-zinc-200 md:block">
-						Profile
-					</a>
-					<form method="post" action="/auth/signout">
-						<button type="submit" class="rounded-lg border border-zinc-700 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-zinc-600 hover:text-zinc-200">
-							Sign out
-						</button>
-					</form>
-
-					<button
-						class="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 md:hidden"
-						onclick={() => mobileMenuOpen = !mobileMenuOpen}
-					>
-						<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-						</svg>
-					</button>
-				</div>
-			{:else}
-				<div class="flex items-center gap-2">
-					<a href="/auth/signin" class="rounded-lg px-4 py-1.5 text-sm text-zinc-400 transition hover:text-zinc-200">Sign in</a>
-					<a href="/auth/signup" class="rounded-lg bg-brand-600 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-brand-500">Sign up</a>
-				</div>
-			{/if}
-		</div>
-
-		{#if session && mobileMenuOpen}
-			<nav class="border-t border-zinc-800 px-4 py-3 md:hidden">
-				{#each navLinks as link}
-					<a
-						href={link.href}
-						onclick={() => mobileMenuOpen = false}
-						class="block rounded-lg px-3 py-2 text-sm font-medium transition {currentPath.startsWith(link.href) ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}"
-					>
-						<span class="mr-2">{link.icon}</span>{link.label}
-					</a>
-				{/each}
-				<a href="/profile" onclick={() => mobileMenuOpen = false} class="block rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-zinc-200">Profile</a>
-			</nav>
+		{#if session}
+			<div class="flex items-center gap-1 sm:gap-3">
+				<a
+					href="/places"
+					class="rounded-lg px-2 py-1 text-xs font-bold text-warm-600 transition-colors hover:bg-warm-100 hover:text-warm-800 sm:px-3 sm:py-1.5 sm:text-sm"
+				>
+					My Places
+				</a>
+				<button
+					onclick={() => { showAddModal = true; }}
+					class="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 text-xs font-bold text-white transition-colors hover:bg-brand-700 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-sm"
+				>
+					<svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="12" y1="5" x2="12" y2="19" />
+						<line x1="5" y1="12" x2="19" y2="12" />
+					</svg>
+					<span class="hidden sm:inline">Add Place</span>
+				</button>
+				<button
+					onclick={handleSignOut}
+					class="rounded-lg px-1.5 py-1 text-[11px] font-medium text-warm-400 transition-colors hover:bg-warm-100 hover:text-warm-600 sm:px-3 sm:py-1.5 sm:text-sm"
+				>
+					Sign out
+				</button>
+			</div>
 		{/if}
-	</header>
+		</div>
+	</nav>
 
-	<main class="flex-1">
-		{@render children()}
-	</main>
+	{@render children()}
 
-	<footer class="border-t border-zinc-800/50 py-6 text-center text-xs text-zinc-600">
-		&copy; {new Date().getFullYear()} Gym Anatomy Tracker
-	</footer>
+	{#if showAddModal}
+		<AddPlaceModal
+			onClose={() => { showAddModal = false; }}
+			onPlaceAdded={() => { invalidate('supabase:auth'); }}
+		/>
+	{/if}
 </div>
