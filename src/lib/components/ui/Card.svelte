@@ -9,6 +9,6 @@
 	let { children, class: className = '' }: Props = $props();
 </script>
 
-<div class="rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-sm {className}">
+<div class="panel-glass p-6 {className}">
 	{@render children()}
 </div>

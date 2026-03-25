@@ -12,27 +12,30 @@
 </script>
 
 <button
-	class="group w-full rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 text-left transition hover:border-zinc-700 hover:bg-zinc-800/60"
+	class="group w-full rounded-2xl p-4 text-left transition-all duration-200
+		border border-white/5 hover:border-sakura-400/20
+		hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sakura-500/10"
+	style="background: linear-gradient(145deg, rgba(42, 31, 61, 0.6), rgba(30, 21, 48, 0.8)); backdrop-filter: blur(8px);"
 	{onclick}
 >
 	<div class="flex items-start justify-between">
 		<div class="min-w-0 flex-1">
-			<h3 class="font-semibold text-zinc-100 group-hover:text-brand-400 transition">{exercise.name_en}</h3>
-			<p class="mt-0.5 text-sm text-zinc-400">{exercise.name_zh}</p>
+			<h3 class="font-bold text-white/90 group-hover:text-sakura-300 transition">{exercise.name_en}</h3>
+			<p class="mt-0.5 text-xs text-white/30">{exercise.name_zh}</p>
 		</div>
 		<div class="ml-3 flex flex-col items-end gap-1">
-			<span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{exercise.equipment}</span>
-			<span class="rounded-full bg-zinc-800/60 px-2 py-0.5 text-xs text-zinc-500">{exercise.category}</span>
+			<span class="rounded-full bg-white/5 border border-white/8 px-2 py-0.5 text-[10px] font-medium text-white/40">{exercise.equipment}</span>
+			<span class="rounded-full bg-white/5 border border-white/8 px-2 py-0.5 text-[10px] text-white/25">{exercise.category}</span>
 		</div>
 	</div>
 
 	{#if primaryMuscles.length > 0 || secondaryMuscles.length > 0}
 		<div class="mt-3 flex flex-wrap gap-1.5">
 			{#each primaryMuscles as muscle}
-				<span class="rounded-full bg-brand-600/20 px-2 py-0.5 text-xs text-brand-300">{muscle}</span>
+				<span class="rounded-full bg-sakura-500/15 border border-sakura-400/15 px-2 py-0.5 text-[10px] font-bold text-sakura-300">{muscle}</span>
 			{/each}
 			{#each secondaryMuscles as muscle}
-				<span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-500">{muscle}</span>
+				<span class="rounded-full bg-white/5 border border-white/8 px-2 py-0.5 text-[10px] text-white/30">{muscle}</span>
 			{/each}
 		</div>
 	{/if}

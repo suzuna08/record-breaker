@@ -1,137 +1,155 @@
 <script lang="ts">
-	import '../app.css';
-	import { invalidate, goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import AddPlaceModal from '$lib/components/AddPlaceModal.svelte';
+	import type { Snippet } from 'svelte';
+	import GameBackground from '$lib/components/ui/GameBackground.svelte';
+	import '../app.css';
 
-	let { data, children } = $props();
-
-	let supabase = $derived(data.supabase);
-	let session = $derived(data.session);
-	let showAddModal = $state(false);
-
-	const REFRESH_MARGIN_MS = 5 * 60 * 1000; // refresh 5 min before expiry
-
-	function scheduleTokenRefresh(expiresAt: number | undefined) {
-		if (!expiresAt) return undefined;
-		const msUntilExpiry = expiresAt * 1000 - Date.now();
-		const delay = Math.max(msUntilExpiry - REFRESH_MARGIN_MS, 0);
-		return setTimeout(async () => {
-			const { error } = await supabase.auth.refreshSession();
-			if (error) {
-				// Refresh failed — session may have been revoked server-side
-				goto('/login');
-			}
-		}, delay);
+	interface Props {
+		data: import('./$types').LayoutData;
+		children: Snippet;
 	}
 
+	let { data, children }: Props = $props();
+	let { supabase, session } = $derived(data);
+	let mobileMenuOpen = $state(false);
+
 	onMount(() => {
-		let refreshTimer = scheduleTokenRefresh(session?.expires_at);
-
-		const {
-			data: { subscription }
-		} = supabase.auth.onAuthStateChange((event, newSession) => {
-			if (event === 'SIGNED_OUT') {
-				clearTimeout(refreshTimer);
-				invalidate('supabase:auth');
-				return;
-			}
-
+		const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
 			if (newSession?.expires_at !== session?.expires_at) {
-				clearTimeout(refreshTimer);
-				refreshTimer = scheduleTokenRefresh(newSession?.expires_at);
 				invalidate('supabase:auth');
 			}
 		});
-
-		function handleVisibilityChange() {
-			if (document.visibilityState !== 'visible') return;
-
-			supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-				if (!currentSession) {
-					invalidate('supabase:auth');
-					return;
-				}
-
-				const expiresAt = currentSession.expires_at ?? 0;
-				const isNearExpiry = expiresAt * 1000 - Date.now() < REFRESH_MARGIN_MS;
-				if (isNearExpiry) {
-					supabase.auth.refreshSession();
-				}
-			});
-		}
-
-		document.addEventListener('visibilitychange', handleVisibilityChange);
-
-		return () => {
-			clearTimeout(refreshTimer);
-			subscription.unsubscribe();
-			document.removeEventListener('visibilitychange', handleVisibilityChange);
-		};
+		return () => subscription.unsubscribe();
 	});
 
-	async function handleSignOut() {
-		await supabase.auth.signOut();
-		goto('/login');
-	}
+	const navLinks = [
+		{ href: '/dashboard', label: 'Dashboard', labelZh: '儀表板', icon: '🏠' },
+		{ href: '/anatomy', label: 'Anatomy', labelZh: '解剖', icon: '💪' },
+		{ href: '/exercises', label: 'Exercises', labelZh: '動作庫', icon: '⚡' },
+		{ href: '/workouts', label: 'Workouts', labelZh: '訓練', icon: '📋' },
+		{ href: '/photos', label: 'Photos', labelZh: '照片', icon: '📸' },
+	];
+
+	let currentPath = $derived($page.url.pathname);
 </script>
 
-<svelte:head>
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
-		rel="stylesheet"
-	/>
-	<title>MapOrganizer</title>
-</svelte:head>
+<div class="relative flex min-h-screen flex-col">
+	<GameBackground />
 
-<div class="min-h-[100dvh] bg-sage-100 font-sans">
-	<nav class="sticky top-0 z-30 border-b border-warm-200/60 bg-warm-50/85 backdrop-blur-lg">
-		<div class="mx-auto flex h-12 max-w-[1400px] items-center justify-between px-3 sm:h-14 sm:px-6">
-			<a href={session ? '/places' : '/'} class="flex items-center gap-1.5 text-base font-extrabold text-warm-800 sm:gap-2 sm:text-lg">
-				<svg class="h-5 w-5 text-brand-600 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-					<circle cx="12" cy="10" r="3" />
-				</svg>
-				MapOrganizer
+	<!-- Header -->
+	<header class="sticky top-0 z-50 border-b border-white/5"
+		style="background: linear-gradient(135deg, rgba(42, 31, 61, 0.85), rgba(26, 16, 37, 0.9)); backdrop-filter: blur(20px);">
+		<div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
+			<!-- Logo -->
+			<a href={session ? '/dashboard' : '/'} class="flex items-center gap-2 group">
+				<span class="text-xl">🌸</span>
+				<span class="text-lg font-extrabold tracking-tight
+					bg-gradient-to-r from-sakura-300 via-sakura-400 to-gold-400
+					bg-clip-text text-transparent
+					group-hover:from-sakura-200 group-hover:to-gold-300 transition-all">
+					Record Breaker
+				</span>
 			</a>
 
-		{#if session}
-			<div class="flex items-center gap-1 sm:gap-3">
-				<a
-					href="/places"
-					class="rounded-lg px-2 py-1 text-xs font-bold text-warm-600 transition-colors hover:bg-warm-100 hover:text-warm-800 sm:px-3 sm:py-1.5 sm:text-sm"
-				>
-					My Places
-				</a>
-				<button
-					onclick={() => { showAddModal = true; }}
-					class="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 text-xs font-bold text-white transition-colors hover:bg-brand-700 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-sm"
-				>
-					<svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<line x1="12" y1="5" x2="12" y2="19" />
-						<line x1="5" y1="12" x2="19" y2="12" />
-					</svg>
-					<span class="hidden sm:inline">Add Place</span>
-				</button>
-				<button
-					onclick={handleSignOut}
-					class="rounded-lg px-1.5 py-1 text-[11px] font-medium text-warm-400 transition-colors hover:bg-warm-100 hover:text-warm-600 sm:px-3 sm:py-1.5 sm:text-sm"
-				>
-					Sign out
-				</button>
-			</div>
-		{/if}
+			{#if session}
+				<!-- Desktop nav -->
+				<nav class="hidden items-center gap-1 md:flex">
+					{#each navLinks as link}
+						<a
+							href={link.href}
+							class="rounded-full px-3.5 py-1.5 text-xs font-bold tracking-wide transition-all duration-200
+								{currentPath.startsWith(link.href)
+									? 'bg-sakura-500/20 text-sakura-300 shadow-sm shadow-sakura-500/10 border border-sakura-400/20'
+									: 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'}"
+						>
+							<span class="mr-1">{link.icon}</span>
+							{link.label}
+						</a>
+					{/each}
+				</nav>
+
+				<div class="flex items-center gap-3">
+					<a href="/profile"
+						class="hidden text-xs font-medium text-white/40 hover:text-white/70 transition md:block">
+						Profile
+					</a>
+					<form method="post" action="/auth/signout">
+						<button type="submit"
+							class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium text-white/40 transition hover:border-white/20 hover:text-white/60">
+							Sign out
+						</button>
+					</form>
+
+					<!-- Mobile hamburger -->
+					<button
+						class="rounded-lg p-1.5 text-white/50 hover:bg-white/10 md:hidden"
+						aria-label="Toggle menu"
+						onclick={() => mobileMenuOpen = !mobileMenuOpen}
+					>
+						<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							{#if mobileMenuOpen}
+								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+							{:else}
+								<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+							{/if}
+						</svg>
+					</button>
+				</div>
+			{:else}
+				<div class="flex items-center gap-2">
+					<a href="/auth/signin"
+						class="rounded-full px-4 py-1.5 text-xs font-medium text-white/50 transition hover:text-white/80">
+						Sign in
+					</a>
+					<a href="/auth/signup"
+						class="btn-game btn-game-primary text-xs !px-5 !py-1.5">
+						Sign up
+					</a>
+				</div>
+			{/if}
 		</div>
-	</nav>
 
-	{@render children()}
+		<!-- Mobile menu -->
+		{#if session && mobileMenuOpen}
+			<nav class="border-t border-white/5 px-4 py-3 md:hidden"
+				style="background: rgba(26, 16, 37, 0.95);">
+				{#each navLinks as link}
+					<a
+						href={link.href}
+						onclick={() => mobileMenuOpen = false}
+						class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition
+							{currentPath.startsWith(link.href)
+								? 'bg-sakura-500/15 text-sakura-300'
+								: 'text-white/50 hover:bg-white/5 hover:text-white/80'}"
+					>
+						<span class="text-base">{link.icon}</span>
+						<div>
+							<span>{link.label}</span>
+							<span class="ml-2 text-[10px] font-normal opacity-50">{link.labelZh}</span>
+						</div>
+					</a>
+				{/each}
+				<a href="/profile" onclick={() => mobileMenuOpen = false}
+					class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-white/40 hover:text-white/70">
+					<span class="text-base">👤</span> Profile
+				</a>
+			</nav>
+		{/if}
+	</header>
 
-	{#if showAddModal}
-		<AddPlaceModal
-			onClose={() => { showAddModal = false; }}
-			onPlaceAdded={() => { invalidate('supabase:auth'); }}
-		/>
-	{/if}
+	<!-- Main content -->
+	<main class="relative z-10 flex-1">
+		{@render children()}
+	</main>
+
+	<!-- Footer -->
+	<footer class="relative z-10 border-t border-white/5 py-6 text-center">
+		<div class="flex items-center justify-center gap-2 text-xs font-medium text-white/20">
+			<span>🌸</span>
+			<span>&copy; {new Date().getFullYear()} Record Breaker</span>
+			<span>🌸</span>
+		</div>
+	</footer>
 </div>

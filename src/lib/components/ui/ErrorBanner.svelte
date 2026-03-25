@@ -8,7 +8,7 @@
 </script>
 
 {#if visible}
-	<div class="rounded-lg border border-red-800/50 bg-red-950/50 px-4 py-3 text-sm text-red-300">
-		{message}
+	<div class="rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300 backdrop-blur-sm">
+		<span class="mr-1">⚠</span> {message}
 	</div>
 {/if}

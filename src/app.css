@@ -1,165 +1,211 @@
-@import 'tailwindcss';
-
-:root {
-	--safe-top: env(safe-area-inset-top, 0px);
-	--safe-bottom: env(safe-area-inset-bottom, 0px);
-	--safe-left: env(safe-area-inset-left, 0px);
-	--safe-right: env(safe-area-inset-right, 0px);
-}
-
-html {
-	-webkit-text-size-adjust: 100%;
-	-webkit-tap-highlight-color: transparent;
-}
-
-body {
-	overscroll-behavior-y: none;
-	-webkit-overflow-scrolling: touch;
-}
-
-button,
-a,
-[role='button'] {
-	touch-action: manipulation;
-}
-
-.animate-in {
-	animation: toast-in 0.25s ease-out;
-}
-
-@keyframes toast-in {
-	from {
-		opacity: 0;
-		transform: translateY(8px) scale(0.96);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
-}
-
-@supports (padding-top: env(safe-area-inset-top)) {
-	body {
-		padding-top: var(--safe-top);
-		padding-bottom: var(--safe-bottom);
-		padding-left: var(--safe-left);
-		padding-right: var(--safe-right);
-	}
-}
-
-/* ---- Map markers ---- */
-
-.map-marker {
-	cursor: pointer;
-	color: var(--color-brand-500);
-	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
-	transition: color 0.2s ease, transform 0.2s ease, filter 0.2s ease;
-	transform-origin: bottom center;
-	line-height: 0;
-}
-
-.map-marker:hover {
-	color: var(--color-brand-600);
-	transform: scale(1.15);
-	z-index: 10 !important;
-}
-
-.map-marker--selected {
-	color: var(--color-brand-700);
-	transform: scale(1.35);
-	z-index: 20 !important;
-	filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
-}
-
-/* ---- Geolocate control ---- */
-
-.maplibregl-ctrl-geolocate {
-	background: white !important;
-	border-radius: 8px !important;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
-}
-
-.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon {
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%235a5042' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2m0 16v2M2 12h2m16 0h2'/%3E%3C/svg%3E") !important;
-}
-
-.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon {
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%23a8935f' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2m0 16v2M2 12h2m16 0h2'/%3E%3C/svg%3E") !important;
-}
-
-.maplibregl-user-location-dot {
-	background-color: var(--color-brand-500) !important;
-	box-shadow: 0 0 0 3px rgba(168, 147, 95, 0.3) !important;
-}
-
-.maplibregl-user-location-dot::before {
-	background-color: var(--color-brand-400) !important;
-}
-
-/* ---- Map popups ---- */
-
-.map-popup-warm .maplibregl-popup-content {
-	font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
-	border-radius: 12px;
-	padding: 10px 14px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-	border: 1px solid var(--color-warm-200);
-}
-
-.map-popup-warm .maplibregl-popup-tip {
-	border-top-color: white;
-}
-
-.map-popup-title {
-	font-weight: 800;
-	font-size: 13px;
-	color: var(--color-warm-800);
-	line-height: 1.3;
-}
-
-.map-popup-meta {
-	font-size: 11px;
-	color: var(--color-warm-500);
-	margin-top: 2px;
-}
-
-.map-popup-rating {
-	font-size: 11px;
-	color: var(--color-brand-500);
-	margin-top: 2px;
-	font-weight: 700;
-}
+@import "tailwindcss";
 
 @theme {
-	--font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
-	--color-brand-50: #f9f6f1;
-	--color-brand-100: #f0ead9;
-	--color-brand-200: #e2d6be;
-	--color-brand-300: #d0c09c;
-	--color-brand-400: #bda87a;
-	--color-brand-500: #a8935f;
-	--color-brand-600: #917e4e;
-	--color-brand-700: #776841;
-	--color-brand-800: #5e5234;
-	--color-brand-900: #4a412a;
-	--color-sage-50: #f2f4ef;
-	--color-sage-100: #eaece5;
-	--color-sage-200: #d6dbc8;
-	--color-sage-300: #b8c1a8;
-	--color-sage-400: #98a485;
-	--color-sage-500: #7c8a6a;
-	--color-sage-600: #617054;
-	--color-sage-700: #4c5842;
-	--color-sage-800: #3c4535;
-	--color-sage-900: #2f362a;
-	--color-warm-50: #faf9f7;
-	--color-warm-100: #f3efe8;
-	--color-warm-200: #e8e1d4;
-	--color-warm-300: #d5cab8;
-	--color-warm-400: #b5a892;
-	--color-warm-500: #978a74;
-	--color-warm-600: #7a6e5a;
-	--color-warm-700: #5a5042;
-	--color-warm-800: #3b332a;
-	--color-warm-900: #28221c;
+	--font-sans: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+
+	/* Sakura / anime accent palette */
+	--color-sakura-50: #fff5f7;
+	--color-sakura-100: #ffe0e8;
+	--color-sakura-200: #ffc2d4;
+	--color-sakura-300: #ff8fb3;
+	--color-sakura-400: #ff6b95;
+	--color-sakura-500: #ff4081;
+	--color-sakura-600: #e91e6c;
+	--color-sakura-700: #c2185b;
+
+	/* Warm gold / game accent */
+	--color-gold-50: #fffbeb;
+	--color-gold-100: #fff3c4;
+	--color-gold-200: #ffe082;
+	--color-gold-300: #ffd54f;
+	--color-gold-400: #ffca28;
+	--color-gold-500: #ffc107;
+	--color-gold-600: #ffb300;
+	--color-gold-700: #ff8f00;
+
+	/* Sky / cyan accent */
+	--color-sky-300: #7ee8fa;
+	--color-sky-400: #4dd0e1;
+	--color-sky-500: #26c6da;
+
+	/* Game surface (dark dreamy) */
+	--color-game-50: #f8f0ff;
+	--color-game-100: #e8d5f5;
+	--color-game-200: #d1b3e8;
+	--color-game-300: #b388d9;
+	--color-game-800: #2a1f3d;
+	--color-game-850: #221833;
+	--color-game-900: #1a1025;
+	--color-game-950: #0f0a18;
+
+	/* Parchment / warm panel backgrounds */
+	--color-parchment-50: #fefcf6;
+	--color-parchment-100: #fdf6e8;
+	--color-parchment-200: #f8edd0;
+	--color-parchment-300: #f0ddb0;
+	--color-parchment-400: #e4c888;
+
+	/* Keep brand for backward compat during migration */
+	--color-brand-50: #eef6ff;
+	--color-brand-100: #d9eaff;
+	--color-brand-200: #bcdaff;
+	--color-brand-300: #8ec3ff;
+	--color-brand-400: #59a2ff;
+	--color-brand-500: #3381fc;
+	--color-brand-600: #1d62f1;
+	--color-brand-700: #154dde;
+	--color-brand-800: #183fb4;
+	--color-brand-900: #19398e;
+	--color-brand-950: #142456;
+
+	--color-surface-50: #fafafa;
+	--color-surface-100: #f4f4f5;
+	--color-surface-800: #27272a;
+	--color-surface-850: #1e1e21;
+	--color-surface-900: #18181b;
+	--color-surface-950: #09090b;
+}
+
+/* Global game background */
+body {
+	font-family: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+	background: linear-gradient(180deg, #1a1025 0%, #2a1f3d 40%, #1e1530 70%, #0f0a18 100%);
+	background-attachment: fixed;
+	color: #f0e8f8;
+}
+
+/* Parchment panel utility */
+.panel-parchment {
+	background: linear-gradient(145deg, #fefcf6 0%, #fdf6e8 50%, #f8edd0 100%);
+	border: 2px solid #e4c888;
+	border-radius: 1rem;
+	box-shadow:
+		0 4px 24px rgba(228, 200, 136, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Glass panel utility */
+.panel-glass {
+	background: rgba(30, 21, 48, 0.65);
+	backdrop-filter: blur(16px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 1rem;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Game button base */
+.btn-game {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.625rem 1.5rem;
+	font-weight: 700;
+	font-size: 0.875rem;
+	border-radius: 9999px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.btn-game-primary {
+	background: linear-gradient(135deg, #ff6b95, #ff4081, #e91e6c);
+	color: white;
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	box-shadow:
+		0 4px 16px rgba(255, 64, 129, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn-game-primary:hover {
+	transform: translateY(-1px);
+	box-shadow:
+		0 6px 24px rgba(255, 64, 129, 0.45),
+		inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-game-secondary {
+	background: linear-gradient(135deg, #fdf6e8, #f8edd0);
+	color: #5a4a3a;
+	border: 2px solid #e4c888;
+	box-shadow:
+		0 2px 8px rgba(228, 200, 136, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.btn-game-secondary:hover {
+	transform: translateY(-1px);
+	box-shadow:
+		0 4px 16px rgba(228, 200, 136, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	background: linear-gradient(135deg, #fff8f0, #fdf6e8);
+}
+
+.btn-game-ghost {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(240, 232, 248, 0.8);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.btn-game-ghost:hover {
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+}
+
+/* Sakura glow animation */
+@keyframes sakura-pulse {
+	0%, 100% { opacity: 0.6; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Petal falling animation */
+@keyframes petal-fall {
+	0% { transform: translateY(-10px) rotate(0deg) translateX(0); opacity: 0; }
+	10% { opacity: 1; }
+	90% { opacity: 0.8; }
+	100% { transform: translateY(100vh) rotate(360deg) translateX(80px); opacity: 0; }
+}
+
+/* Subtle float animation */
+@keyframes gentle-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-4px); }
+}
+
+/* Input styling for game theme */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="url"],
+textarea,
+select {
+	background: rgba(30, 21, 48, 0.4) !important;
+	border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+	border-radius: 0.75rem !important;
+	color: #f0e8f8 !important;
+	transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+input:focus,
+textarea:focus,
+select:focus {
+	border-color: rgba(255, 107, 149, 0.5) !important;
+	box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.15) !important;
+	outline: none !important;
+}
+input::placeholder,
+textarea::placeholder {
+	color: rgba(240, 232, 248, 0.35) !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+	width: 6px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 143, 179, 0.3);
+	border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 143, 179, 0.5);
 }

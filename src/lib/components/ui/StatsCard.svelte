@@ -11,17 +11,20 @@
 	let { title, value, subtitle, icon }: Props = $props();
 </script>
 
-<div class="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-sm">
+<div class="panel-glass p-5">
 	<div class="flex items-start justify-between">
 		<div>
-			<p class="text-sm font-medium text-zinc-400">{title}</p>
-			<p class="mt-1 text-2xl font-bold tracking-tight text-zinc-50">{value}</p>
+			<p class="text-xs font-bold uppercase tracking-wider text-white/30">{title}</p>
+			<p class="mt-1.5 text-2xl font-extrabold tracking-tight text-white"
+				style="text-shadow: 0 0 20px rgba(255, 143, 179, 0.3);">
+				{value}
+			</p>
 			{#if subtitle}
-				<p class="mt-0.5 text-xs text-zinc-500">{subtitle}</p>
+				<p class="mt-0.5 text-xs text-white/30">{subtitle}</p>
 			{/if}
 		</div>
 		{#if icon}
-			<div class="rounded-lg bg-brand-600/20 p-2 text-brand-400">
+			<div class="rounded-xl bg-sakura-500/10 p-2.5 text-sakura-400 border border-sakura-400/10">
 				{@render icon()}
 			</div>
 		{/if}

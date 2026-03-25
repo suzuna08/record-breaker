@@ -27,14 +27,14 @@
 </script>
 
 <svelte:head>
-	<title>Sign In — Gym Anatomy Tracker</title>
+	<title>Sign In — Record Breaker</title>
 </svelte:head>
 
 <div class="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
-	<div class="w-full max-w-sm">
+	<div class="panel-glass w-full max-w-sm rounded-2xl p-8">
 		<div class="mb-8 text-center">
-			<h1 class="text-2xl font-bold text-zinc-50">Welcome Back</h1>
-			<p class="mt-1 text-sm text-zinc-400">歡迎回來</p>
+			<h1 class="text-2xl font-bold text-white">Welcome Back</h1>
+			<p class="mt-1 text-sm text-white/40">歡迎回來</p>
 		</div>
 
 		<form class="space-y-4" onsubmit={(e) => { e.preventDefault(); handleSignIn(); }}>
@@ -48,9 +48,9 @@
 			</Button>
 		</form>
 
-		<p class="mt-6 text-center text-sm text-zinc-500">
+		<p class="mt-6 text-center text-sm text-white/30">
 			Don't have an account?
-			<a href="/auth/signup" class="text-brand-400 hover:text-brand-300">Sign up</a>
+			<a href="/auth/signup" class="text-sakura-400 hover:text-sakura-300">Sign up</a>
 		</p>
 	</div>
 </div>

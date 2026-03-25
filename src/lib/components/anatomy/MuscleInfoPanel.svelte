@@ -18,43 +18,44 @@
 			<div>
 				<div class="flex items-center gap-3">
 					<span
-						class="inline-block h-3 w-3 rounded-full"
-						style:background-color={REGION_COLORS[region.region]}
+						class="inline-block h-3.5 w-3.5 rounded-full shadow-lg"
+						style="background-color: {REGION_COLORS[region.region]}; box-shadow: 0 0 12px {REGION_COLORS[region.region]}66;"
 					></span>
-					<h2 class="text-xl font-bold text-zinc-50">{region.name_en}</h2>
+					<h2 class="text-xl font-extrabold text-parchment-50">{region.name_en}</h2>
 				</div>
-				<p class="mt-1 text-lg text-zinc-300">{region.name_zh}</p>
+				<p class="mt-1 text-base font-medium text-white/40">{region.name_zh}</p>
 			</div>
 
-			<div class="rounded-lg border border-zinc-800 bg-zinc-800/30 p-3">
-				<p class="text-xs font-medium uppercase tracking-wider text-zinc-500">Region</p>
-				<p class="mt-0.5 text-sm capitalize text-zinc-300">{region.region}</p>
-			</div>
-
-			<div>
-				<p class="text-xs font-medium uppercase tracking-wider text-zinc-500">Description</p>
-				<p class="mt-1 text-sm leading-relaxed text-zinc-400">{region.description}</p>
+			<div class="rounded-xl border border-white/8 bg-white/5 p-3">
+				<p class="text-[10px] font-bold uppercase tracking-widest text-white/25">Region</p>
+				<p class="mt-0.5 text-sm font-bold capitalize text-white/60">{region.region}</p>
 			</div>
 
 			<div>
-				<p class="text-xs font-medium uppercase tracking-wider text-zinc-500">Mesh Key</p>
-				<code class="mt-1 block rounded bg-zinc-800 px-2 py-1 font-mono text-xs text-zinc-400">{region.mesh_key}</code>
+				<p class="text-[10px] font-bold uppercase tracking-widest text-white/25">Description</p>
+				<p class="mt-1.5 text-sm leading-relaxed text-white/50">{region.description}</p>
+			</div>
+
+			<div>
+				<p class="text-[10px] font-bold uppercase tracking-widest text-white/25">Mesh Key</p>
+				<code class="mt-1 block rounded-lg bg-white/5 border border-white/8 px-3 py-1.5 font-mono text-xs text-sakura-300/60">{region.mesh_key}</code>
 			</div>
 
 			{#if exercises.length > 0}
 				<div>
-					<p class="mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
+					<p class="mb-2.5 text-[10px] font-bold uppercase tracking-widest text-white/25">
 						Common Exercises ({exercises.length})
 					</p>
 					<ul class="space-y-1.5">
 						{#each exercises as exercise}
 							<li>
 								<button
-									class="w-full rounded-lg border border-zinc-800 bg-zinc-800/30 px-3 py-2 text-left text-sm transition hover:border-zinc-700 hover:bg-zinc-800/60"
+									class="w-full rounded-xl border border-white/8 bg-white/5 px-3.5 py-2.5 text-left text-sm transition-all
+										hover:border-sakura-400/20 hover:bg-sakura-500/8 hover:-translate-y-px"
 									onclick={() => onExerciseClick?.(exercise)}
 								>
-									<span class="text-zinc-200">{exercise.name_en}</span>
-									<span class="ml-2 text-xs text-zinc-500">{exercise.name_zh}</span>
+									<span class="font-bold text-white/70">{exercise.name_en}</span>
+									<span class="ml-2 text-[10px] text-white/25">{exercise.name_zh}</span>
 								</button>
 							</li>
 						{/each}
@@ -64,9 +65,9 @@
 		</div>
 	{:else}
 		<div class="flex flex-1 flex-col items-center justify-center text-center">
-			<div class="mb-3 text-4xl opacity-30">◉</div>
-			<p class="text-sm text-zinc-500">Click a muscle region to view details</p>
-			<p class="mt-1 text-xs text-zinc-600">點擊肌肉區域查看詳情</p>
+			<div class="mb-4 text-5xl opacity-20">💪</div>
+			<p class="text-sm font-bold text-white/25">Click a muscle region to view details</p>
+			<p class="mt-1 text-xs text-white/15">點擊肌肉區域查看詳情</p>
 		</div>
 	{/if}
 </div>

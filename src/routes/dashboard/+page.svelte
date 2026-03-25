@@ -14,15 +14,15 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard — Gym Anatomy Tracker</title>
+	<title>Dashboard — Record Breaker</title>
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-8">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-zinc-50">
+		<h1 class="text-3xl font-bold text-white">
 			Welcome back{data.profile?.display_name ? `, ${data.profile.display_name}` : ''}
 		</h1>
-		<p class="mt-1 text-sm text-zinc-400">歡迎回來 — Here's your training overview</p>
+		<p class="mt-1 text-sm text-white/40">歡迎回來 — Here's your training overview</p>
 	</div>
 
 	<!-- Stats row -->
@@ -44,26 +44,26 @@
 
 			<!-- Recent workouts -->
 			<div>
-				<h2 class="mb-3 text-lg font-semibold text-zinc-200">Recent Workouts</h2>
+				<h2 class="mb-3 text-lg font-semibold text-white/80">Recent Workouts</h2>
 				{#if data.recentSessions.length === 0}
-					<div class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 text-center">
-						<p class="text-sm text-zinc-500">No workouts yet. Start training!</p>
+					<div class="panel-glass p-6 text-center">
+						<p class="text-sm text-white/40">No workouts yet. Start training!</p>
 					</div>
 				{:else}
 					<div class="space-y-2">
 						{#each data.recentSessions as session}
 							<a
 								href="/workouts/{session.id}"
-								class="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 transition hover:border-zinc-700"
+								class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition hover:border-sakura-500/30 hover:bg-white/10"
 							>
 								<div>
-									<p class="font-medium text-zinc-200">{session.title || 'Untitled'}</p>
-									<p class="text-xs text-zinc-500">
+									<p class="font-medium text-white">{session.title || 'Untitled'}</p>
+									<p class="text-xs text-white/40">
 										{new Date(session.session_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 										· {session.exercise_logs?.length ?? 0} exercises
 									</p>
 								</div>
-								<span class="text-xs text-zinc-600">→</span>
+								<span class="text-xs text-sakura-400">→</span>
 							</a>
 						{/each}
 					</div>
@@ -71,28 +71,28 @@
 			</div>
 
 			<!-- Chart placeholder -->
-			<div class="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/20 p-8 text-center">
-				<p class="text-sm text-zinc-500">Exercise progress chart coming soon</p>
-				<p class="text-xs text-zinc-600">訓練進度圖表即將推出</p>
+			<div class="rounded-xl border border-dashed border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm">
+				<p class="text-sm text-white/40">Exercise progress chart coming soon</p>
+				<p class="text-xs text-white/30">訓練進度圖表即將推出</p>
 			</div>
 		</div>
 
 		<!-- Right sidebar: Recently trained muscles -->
 		<div>
-			<div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
-				<h3 class="mb-3 text-sm font-medium uppercase tracking-wider text-zinc-500">Recently Trained</h3>
+			<div class="panel-glass p-5">
+				<h3 class="mb-3 text-sm font-medium uppercase tracking-wider text-white/40">Recently Trained</h3>
 				<AnatomySvg highlightedMeshKeys={recentMeshKeys} />
 
 				{#if (data.recentMuscles ?? []).length > 0}
 					<div class="mt-4 flex flex-wrap gap-1.5">
 						{#each data.recentMuscles ?? [] as muscle}
-							<span class="rounded-full bg-brand-600/20 px-2 py-0.5 text-xs text-brand-300">
+							<span class="rounded-full border border-sakura-500/20 bg-sakura-500/10 px-2 py-0.5 text-xs text-sakura-300">
 								{muscle.name_en}
 							</span>
 						{/each}
 					</div>
 				{:else}
-					<p class="mt-3 text-center text-xs text-zinc-600">Log a workout to see trained muscles</p>
+					<p class="mt-3 text-center text-xs text-white/40">Log a workout to see trained muscles</p>
 				{/if}
 			</div>
 		</div>

@@ -37,18 +37,18 @@
 </script>
 
 <svelte:head>
-	<title>Sign Up — Gym Anatomy Tracker</title>
+	<title>Sign Up — Record Breaker</title>
 </svelte:head>
 
 <div class="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
-	<div class="w-full max-w-sm">
+	<div class="panel-glass w-full max-w-sm rounded-2xl p-8">
 		<div class="mb-8 text-center">
-			<h1 class="text-2xl font-bold text-zinc-50">Create Account</h1>
-			<p class="mt-1 text-sm text-zinc-400">建立帳號</p>
+			<h1 class="text-2xl font-bold text-white">Create Account</h1>
+			<p class="mt-1 text-sm text-white/40">建立帳號</p>
 		</div>
 
 		{#if successMsg}
-			<div class="rounded-lg border border-green-800/50 bg-green-950/50 px-4 py-3 text-sm text-green-300">
+			<div class="rounded-lg border border-green-400/20 bg-green-500/10 px-4 py-3 text-sm text-green-300">
 				{successMsg}
 			</div>
 		{:else}
@@ -60,18 +60,18 @@
 				<FormField label="Password" name="password" type="password" bind:value={password} placeholder="At least 6 characters" required />
 
 				<div>
-					<label class="mb-1.5 block text-sm font-medium text-zinc-300">I am a...</label>
+					<label class="mb-1.5 block text-sm font-medium text-white/30">I am a...</label>
 					<div class="grid grid-cols-2 gap-2">
 						<button
 							type="button"
-							class="rounded-lg border px-3 py-2 text-sm transition {role === 'trainee' ? 'border-brand-500 bg-brand-600/20 text-brand-300' : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600'}"
+							class="rounded-lg border px-3 py-2 text-sm transition {role === 'trainee' ? 'border-sakura-400/20 bg-sakura-500/20 text-sakura-300' : 'border-white/8 bg-white/5 text-white/30 hover:border-white/15'}"
 							onclick={() => role = 'trainee'}
 						>
 							🏋️ Trainee
 						</button>
 						<button
 							type="button"
-							class="rounded-lg border px-3 py-2 text-sm transition {role === 'coach' ? 'border-brand-500 bg-brand-600/20 text-brand-300' : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600'}"
+							class="rounded-lg border px-3 py-2 text-sm transition {role === 'coach' ? 'border-sakura-400/20 bg-sakura-500/20 text-sakura-300' : 'border-white/8 bg-white/5 text-white/30 hover:border-white/15'}"
 							onclick={() => role = 'coach'}
 						>
 							🎯 Coach
@@ -84,9 +84,9 @@
 				</Button>
 			</form>
 
-			<p class="mt-6 text-center text-sm text-zinc-500">
+			<p class="mt-6 text-center text-sm text-white/30">
 				Already have an account?
-				<a href="/auth/signin" class="text-brand-400 hover:text-brand-300">Sign in</a>
+				<a href="/auth/signin" class="text-sakura-400 hover:text-sakura-300">Sign in</a>
 			</p>
 		{/if}
 	</div>

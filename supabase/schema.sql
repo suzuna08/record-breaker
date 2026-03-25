@@ -1,5 +1,5 @@
 -- =============================================================
--- Gym Anatomy Tracker — Supabase Schema
+-- Record Breaker — Supabase Schema
 -- =============================================================
 
 -- profiles

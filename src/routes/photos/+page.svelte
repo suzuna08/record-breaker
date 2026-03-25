@@ -61,14 +61,14 @@
 </script>
 
 <svelte:head>
-	<title>Progress Photos — Gym Anatomy Tracker</title>
+	<title>Progress Photos — Record Breaker</title>
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8">
 	<div class="mb-8 flex items-end justify-between">
 		<div>
-			<h1 class="text-3xl font-bold text-zinc-50">Progress Photos</h1>
-			<p class="mt-1 text-sm text-zinc-400">進度照片 — Track your transformation</p>
+			<h1 class="text-3xl font-bold text-white">Progress Photos</h1>
+			<p class="mt-1 text-sm text-white/40">進度照片 — Track your transformation</p>
 		</div>
 		<Button variant="primary" onclick={() => showUpload = !showUpload}>
 			{showUpload ? 'Cancel' : '+ Upload Photo'}
@@ -76,29 +76,29 @@
 	</div>
 
 	{#if showUpload}
-		<Card class="mb-8">
-			<h2 class="mb-4 text-lg font-semibold text-zinc-200">Upload Photo</h2>
+		<Card class="panel-glass mb-8">
+			<h2 class="mb-4 text-lg font-semibold text-white">Upload Photo</h2>
 			<ErrorBanner visible={!!errorMsg} message={errorMsg} />
 
 			<div class="mt-4 space-y-4">
 				<div>
-					<label class="mb-1.5 block text-sm font-medium text-zinc-300">Photo</label>
+					<label class="mb-1.5 block text-sm font-medium text-white/30">Photo</label>
 					<input
 						bind:this={fileInput}
 						type="file"
 						accept="image/*"
-						class="w-full text-sm text-zinc-400 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-500"
+						class="w-full text-sm text-white/50 file:mr-4 file:rounded-lg file:border-0 file:bg-sakura-500 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-sakura-400"
 					/>
 				</div>
 
 				<div class="grid gap-4 sm:grid-cols-2">
 					<div>
-						<label class="mb-1.5 block text-sm font-medium text-zinc-300">Shot Type</label>
+						<label class="mb-1.5 block text-sm font-medium text-white/30">Shot Type</label>
 						<div class="grid grid-cols-4 gap-2">
 							{#each shotTypes as st}
 								<button
 									type="button"
-									class="rounded-lg border px-2 py-1.5 text-xs capitalize transition {shotType === st ? 'border-brand-500 bg-brand-600/20 text-brand-300' : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600'}"
+									class="rounded-lg border px-2 py-1.5 text-xs capitalize transition {shotType === st ? 'border-sakura-400/20 bg-sakura-500/20 text-sakura-300' : 'border-white/8 bg-white/5 text-white/30 hover:border-white/15'}"
 									onclick={() => shotType = st}
 								>
 									{st}
@@ -107,22 +107,22 @@
 						</div>
 					</div>
 					<div>
-						<label class="mb-1.5 block text-sm font-medium text-zinc-300">Date Taken</label>
+						<label class="mb-1.5 block text-sm font-medium text-white/30">Date Taken</label>
 						<input
 							type="date"
 							bind:value={takenAt}
-							class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:outline-none"
+							class="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-sakura-500 focus:outline-none"
 						/>
 					</div>
 				</div>
 
 				<div>
-					<label class="mb-1.5 block text-sm font-medium text-zinc-300">Note (optional)</label>
+					<label class="mb-1.5 block text-sm font-medium text-white/30">Note (optional)</label>
 					<input
 						type="text"
 						bind:value={note}
 						placeholder="e.g. Week 4, after cutting..."
-						class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-brand-500 focus:outline-none"
+						class="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/20 focus:border-sakura-500 focus:outline-none"
 					/>
 				</div>
 
@@ -133,20 +133,19 @@
 		</Card>
 	{/if}
 
-	<!-- Photo grid -->
 	{#if data.photos.length === 0}
-		<Card>
+		<div class="panel-glass rounded-2xl p-8">
 			<div class="py-12 text-center">
 				<p class="text-4xl opacity-20">📷</p>
-				<p class="mt-3 text-zinc-500">No progress photos yet. Upload your first one!</p>
-				<p class="text-sm text-zinc-600">還沒有進度照片，上傳你的第一張吧！</p>
+				<p class="mt-3 text-white/25">No progress photos yet. Upload your first one!</p>
+				<p class="text-sm text-white/25">還沒有進度照片，上傳你的第一張吧！</p>
 			</div>
-		</Card>
+		</div>
 	{:else}
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each data.photos as photo}
-				<div class="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/40">
-					<div class="aspect-[3/4] bg-zinc-800">
+				<div class="panel-glass group overflow-hidden rounded-xl">
+					<div class="aspect-[3/4] bg-white/5">
 						{#if photo.image_url}
 							<img
 								src={photo.image_url}
@@ -155,20 +154,20 @@
 								loading="lazy"
 							/>
 						{:else}
-							<div class="flex h-full items-center justify-center text-zinc-600">
+							<div class="flex h-full items-center justify-center text-white/25">
 								<span class="text-3xl">📷</span>
 							</div>
 						{/if}
 					</div>
 					<div class="p-3">
 						<div class="flex items-center justify-between">
-							<span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs capitalize text-zinc-400">{photo.shot_type}</span>
-							<span class="text-xs text-zinc-500">
+							<span class="rounded-full bg-white/5 px-2 py-0.5 text-xs capitalize text-white/30">{photo.shot_type}</span>
+							<span class="text-xs text-white/25">
 								{new Date(photo.taken_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
 							</span>
 						</div>
 						{#if photo.note}
-							<p class="mt-2 text-sm text-zinc-400">{photo.note}</p>
+							<p class="mt-2 text-sm text-white/40">{photo.note}</p>
 						{/if}
 					</div>
 				</div>

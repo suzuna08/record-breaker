@@ -33,43 +33,43 @@
 </script>
 
 <svelte:head>
-	<title>Profile — Gym Anatomy Tracker</title>
+	<title>Profile — Record Breaker</title>
 </svelte:head>
 
 <div class="mx-auto max-w-lg px-4 py-8">
-	<h1 class="mb-2 text-3xl font-bold text-zinc-50">Profile</h1>
-	<p class="mb-8 text-sm text-zinc-400">個人設定</p>
+	<h1 class="mb-2 text-3xl font-bold text-white">Profile</h1>
+	<p class="mb-8 text-sm text-white/40">個人設定</p>
 
-	<Card>
+	<Card class="panel-glass">
 		<div class="space-y-4">
 			<ErrorBanner visible={!!errorMsg} message={errorMsg} />
 
 			{#if successMsg}
-				<div class="rounded-lg border border-green-800/50 bg-green-950/50 px-4 py-3 text-sm text-green-300">
+				<div class="rounded-lg border border-green-400/20 bg-green-500/10 px-4 py-3 text-sm text-green-300">
 					{successMsg}
 				</div>
 			{/if}
 
 			<div>
-				<label class="mb-1.5 block text-sm font-medium text-zinc-400">Email</label>
-				<p class="text-sm text-zinc-300">{data.profile?.email ?? '—'}</p>
+				<label class="mb-1.5 block text-sm font-medium text-white/25">Email</label>
+				<p class="text-sm text-white/50">{data.profile?.email ?? '—'}</p>
 			</div>
 
 			<FormField label="Display Name" name="displayName" bind:value={displayName} placeholder="Your name" />
 
 			<div>
-				<label class="mb-1.5 block text-sm font-medium text-zinc-300">Role</label>
+				<label class="mb-1.5 block text-sm font-medium text-white/30">Role</label>
 				<div class="grid grid-cols-2 gap-2">
 					<button
 						type="button"
-						class="rounded-lg border px-3 py-2 text-sm transition {role === 'trainee' ? 'border-brand-500 bg-brand-600/20 text-brand-300' : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600'}"
+						class="rounded-lg border px-3 py-2 text-sm transition {role === 'trainee' ? 'border-sakura-400/20 bg-sakura-500/20 text-sakura-300' : 'border-white/8 bg-white/5 text-white/30 hover:border-white/15'}"
 						onclick={() => role = 'trainee'}
 					>
 						🏋️ Trainee
 					</button>
 					<button
 						type="button"
-						class="rounded-lg border px-3 py-2 text-sm transition {role === 'coach' ? 'border-brand-500 bg-brand-600/20 text-brand-300' : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600'}"
+						class="rounded-lg border px-3 py-2 text-sm transition {role === 'coach' ? 'border-sakura-400/20 bg-sakura-500/20 text-sakura-300' : 'border-white/8 bg-white/5 text-white/30 hover:border-white/15'}"
 						onclick={() => role = 'coach'}
 					>
 						🎯 Coach
@@ -83,9 +83,9 @@
 		</div>
 	</Card>
 
-	<Card class="mt-6">
-		<h2 class="mb-3 text-lg font-semibold text-zinc-200">Coach / Student Links</h2>
-		<p class="text-sm text-zinc-500">Coach-student relationship management will be available in a future update.</p>
-		<p class="text-xs text-zinc-600">教練與學員關係管理將在未來版本提供。</p>
+	<Card class="panel-glass mt-6">
+		<h2 class="mb-3 text-lg font-semibold text-white">Coach / Student Links</h2>
+		<p class="text-sm text-white/30">Coach-student relationship management will be available in a future update.</p>
+		<p class="text-xs text-white/30">教練與學員關係管理將在未來版本提供。</p>
 	</Card>
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AnatomySvg from '$lib/components/anatomy/AnatomySvg.svelte';
+	import CharacterViewer from '$lib/components/anatomy/CharacterViewer.svelte';
 	import MuscleInfoPanel from '$lib/components/anatomy/MuscleInfoPanel.svelte';
 	import { ANATOMY_REGIONS, type AnatomyRegion } from '$lib/data/anatomy';
 	import type { Exercise, ExerciseMuscleMap, MuscleGroup } from '$lib/types';
@@ -8,7 +8,6 @@
 	let { data }: { data: PageData } = $props();
 
 	let selectedRegion = $state<AnatomyRegion | null>(null);
-	let viewMode = $state<'front' | 'back'>('front');
 
 	const muscleByMeshKey = $derived(
 		new Map((data.muscles as MuscleGroup[]).map((m) => [m.mesh_key, m]))
@@ -31,7 +30,13 @@
 		selectedRegion ? getExercisesForMeshKey(selectedRegion.mesh_key) : []
 	);
 
-	function handleSelect(region: AnatomyRegion) {
+	function handleMuscleClick(meshKey: string) {
+		const region = ANATOMY_REGIONS.find((r) => r.mesh_key === meshKey);
+		if (!region) return;
+		selectedRegion = selectedRegion?.mesh_key === region.mesh_key ? null : region;
+	}
+
+	function handleRegionSelect(region: AnatomyRegion) {
 		selectedRegion = selectedRegion?.mesh_key === region.mesh_key ? null : region;
 	}
 
@@ -42,28 +47,32 @@
 	const regionFilters = ['all', 'chest', 'shoulders', 'back', 'arms', 'core', 'legs'] as const;
 	let activeFilter = $state<string>('all');
 
-	let filteredRegions = $derived(
+	const filteredRegions = $derived(
 		activeFilter === 'all'
 			? ANATOMY_REGIONS
 			: ANATOMY_REGIONS.filter((r) => r.region === activeFilter)
 	);
+
+	const highlightedKeys = $derived(filteredRegions.map((r) => r.mesh_key));
 </script>
 
 <svelte:head>
-	<title>Anatomy Explorer — Gym Anatomy Tracker</title>
+	<title>Anatomy Explorer — Record Breaker</title>
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-8">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-zinc-50">Anatomy Explorer</h1>
-		<p class="mt-1 text-sm text-zinc-400">解剖探索 — Click any muscle to learn more and find related exercises</p>
+		<h1 class="text-3xl font-bold text-white">Anatomy Explorer</h1>
+		<p class="mt-1 text-sm text-white/40">解剖探索 — Click any muscle to learn more and find related exercises</p>
 	</div>
 
 	<!-- Region filter pills -->
 	<div class="mb-6 flex flex-wrap gap-2">
 		{#each regionFilters as filter}
 			<button
-				class="rounded-full px-3 py-1 text-xs font-medium capitalize transition {activeFilter === filter ? 'bg-brand-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}"
+				class="rounded-full border px-3 py-1 text-xs font-medium capitalize transition {activeFilter === filter
+					? 'border-sakura-500/30 bg-sakura-500/20 text-sakura-300 shadow-[0_0_8px_var(--color-sakura-500)/0.15]'
+					: 'border-white/10 bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'}"
 				onclick={() => activeFilter = filter}
 			>
 				{filter}
@@ -72,39 +81,19 @@
 	</div>
 
 	<div class="grid gap-8 lg:grid-cols-[1fr_380px]">
-		<!-- Left: Anatomy Model -->
-		<div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
-			<div class="mb-4 flex items-center justify-between">
-				<p class="text-xs font-medium uppercase tracking-wider text-zinc-500">Interactive Model</p>
-				<div class="flex gap-1">
-					<button
-						class="rounded-md px-2.5 py-1 text-xs transition {viewMode === 'front' ? 'bg-zinc-700 text-zinc-200' : 'text-zinc-500 hover:text-zinc-300'}"
-						onclick={() => viewMode = 'front'}
-					>
-						Front
-					</button>
-					<button
-						class="rounded-md px-2.5 py-1 text-xs transition {viewMode === 'back' ? 'bg-zinc-700 text-zinc-200' : 'text-zinc-500 hover:text-zinc-300'}"
-						onclick={() => viewMode = 'back'}
-					>
-						Back
-					</button>
-				</div>
-			</div>
+		<!-- Left: 3D Anatomy Model -->
+		<div class="panel-glass p-6">
+			<p class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Interactive 3D Muscle Map</p>
 
-			<AnatomySvg
+			<CharacterViewer
 				selectedMeshKey={selectedRegion?.mesh_key}
-				highlightedMeshKeys={filteredRegions.map((r) => r.mesh_key)}
-				onSelect={handleSelect}
+				highlightedMeshKeys={highlightedKeys}
+				onMuscleClick={handleMuscleClick}
 			/>
-
-			<p class="mt-4 text-center text-xs text-zinc-600">
-				Placeholder SVG model — replace with GLB/GLTF asset via Threlte for full 3D interaction
-			</p>
 		</div>
 
 		<!-- Right: Info Panel -->
-		<div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+		<div class="panel-glass p-6">
 			<MuscleInfoPanel
 				region={selectedRegion}
 				exercises={relatedExercises}
@@ -115,18 +104,18 @@
 
 	<!-- Muscle group grid (quick select) -->
 	<div class="mt-8">
-		<h2 class="mb-4 text-lg font-semibold text-zinc-200">All Muscle Groups</h2>
+		<h2 class="mb-4 text-lg font-semibold text-white/80">All Muscle Groups</h2>
 		<div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each filteredRegions as region}
 				<button
 					class="rounded-xl border p-4 text-left transition {selectedRegion?.mesh_key === region.mesh_key
-						? 'border-brand-500 bg-brand-600/10'
-						: 'border-zinc-800 bg-zinc-900/40 hover:border-zinc-700'}"
-					onclick={() => handleSelect(region)}
+						? 'border-sakura-500/40 bg-sakura-500/15 shadow-[0_0_12px_var(--color-sakura-500)/0.1]'
+						: 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'}"
+					onclick={() => handleRegionSelect(region)}
 				>
-					<p class="font-medium text-zinc-200">{region.name_en}</p>
-					<p class="text-sm text-zinc-400">{region.name_zh}</p>
-					<p class="mt-1 text-xs capitalize text-zinc-500">{region.region}</p>
+					<p class="font-medium text-white">{region.name_en}</p>
+					<p class="text-sm text-white/50">{region.name_zh}</p>
+					<p class="mt-1 text-xs capitalize text-white/30">{region.region}</p>
 				</button>
 			{/each}
 		</div>

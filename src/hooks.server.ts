@@ -1,71 +1,36 @@
 import { createServerClient } from '@supabase/ssr';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import { redirect, type Handle } from '@sveltejs/kit';
-import type { Database } from '$lib/types/database';
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import type { Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
 
-const PROTECTED_ROUTES = ['/places', '/upload', '/api/places'];
-
-const SESSION_MAX_AGE_SECONDS = 30 * 24 * 60 * 60; // 30 days
-
-export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient<Database>(
-		PUBLIC_SUPABASE_URL,
-		PUBLIC_SUPABASE_ANON_KEY,
-		{
-			cookies: {
-				getAll: () => event.cookies.getAll(),
-				setAll: (cookiesToSet) => {
-					cookiesToSet.forEach(({ name, value, options }) => {
-						event.cookies.set(name, value, {
-							...options,
-							path: '/',
-							maxAge: options?.maxAge ?? SESSION_MAX_AGE_SECONDS,
-							httpOnly: false,
-							secure: event.url.protocol === 'https:',
-							sameSite: 'lax'
-						});
-					});
-				}
+const supabaseHandle: Handle = async ({ event, resolve }) => {
+	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL!, PUBLIC_SUPABASE_ANON_KEY!, {
+		cookies: {
+			getAll() {
+				return event.cookies.getAll();
+			},
+			setAll(cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[]) {
+				cookiesToSet.forEach(({ name, value, options }) =>
+					event.cookies.set(name, value, { ...options, path: '/' } as any)
+				);
 			}
 		}
-	);
+	});
 
 	event.locals.safeGetSession = async () => {
 		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
+		if (!session) return { session: null, user: null };
 
-		if (!session) {
-			return { session: null, user: null };
-		}
+		const {
+			data: { user },
+			error
+		} = await event.locals.supabase.auth.getUser();
+		if (error) return { session: null, user: null };
 
-		try {
-			const {
-				data: { user },
-				error
-			} = await event.locals.supabase.auth.getUser();
-
-			if (error || !user) {
-				// getUser failed but session exists — use session.user as fallback
-				return { session, user: session.user };
-			}
-
-			return { session, user };
-		} catch {
-			// Network error reaching Supabase — trust the session from cookies
-			return { session, user: session.user };
-		}
+		return { session, user };
 	};
-
-	const { session, user } = await event.locals.safeGetSession();
-	event.locals.session = session;
-	event.locals.user = user;
-
-	if (!session && PROTECTED_ROUTES.some((r) => event.url.pathname.startsWith(r))) {
-		const intended = event.url.pathname + event.url.search;
-		const loginUrl = `/login?redirect=${encodeURIComponent(intended)}`;
-		redirect(303, loginUrl);
-	}
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
@@ -73,3 +38,23 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 };
+
+const authGuard: Handle = async ({ event, resolve }) => {
+	const { session, user } = await event.locals.safeGetSession();
+	event.locals.session = session;
+	event.locals.user = user;
+
+	const protectedRoutes = ['/dashboard', '/workouts', '/photos', '/profile'];
+	const isProtected = protectedRoutes.some((r) => event.url.pathname.startsWith(r));
+
+	if (isProtected && !session) {
+		return new Response(null, {
+			status: 303,
+			headers: { location: '/auth/signin' }
+		});
+	}
+
+	return resolve(event);
+};
+
+export const handle = sequence(supabaseHandle, authGuard);

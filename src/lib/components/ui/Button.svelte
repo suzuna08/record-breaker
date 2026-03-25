@@ -13,19 +13,19 @@
 
 	let { variant = 'primary', size = 'md', href, disabled = false, type = 'button', onclick, children }: Props = $props();
 
-	const baseClass = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed';
+	const baseClass = 'inline-flex items-center justify-center font-bold rounded-full transition-all duration-200 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed';
 
 	const variants: Record<string, string> = {
-		primary: 'bg-brand-600 text-white hover:bg-brand-500 focus:ring-brand-500',
-		secondary: 'bg-zinc-800 text-zinc-200 border border-zinc-700 hover:bg-zinc-700 focus:ring-zinc-500',
-		ghost: 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 focus:ring-zinc-500',
-		danger: 'bg-red-600 text-white hover:bg-red-500 focus:ring-red-500',
+		primary: 'btn-game-primary',
+		secondary: 'btn-game-secondary',
+		ghost: 'btn-game-ghost',
+		danger: 'bg-gradient-to-b from-red-500 to-red-600 text-white border-2 border-red-400/30 shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:-translate-y-0.5',
 	};
 
 	const sizes: Record<string, string> = {
-		sm: 'px-3 py-1.5 text-xs gap-1.5',
-		md: 'px-4 py-2 text-sm gap-2',
-		lg: 'px-6 py-2.5 text-base gap-2',
+		sm: 'px-3.5 py-1.5 text-xs gap-1.5',
+		md: 'px-5 py-2 text-sm gap-2',
+		lg: 'px-7 py-3 text-base gap-2',
 	};
 
 	let classes = $derived(`${baseClass} ${variants[variant]} ${sizes[size]}`);

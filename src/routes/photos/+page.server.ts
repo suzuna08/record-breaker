@@ -10,12 +10,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.eq('user_id', session.user.id)
 		.order('taken_at', { ascending: false });
 
-	const photosWithUrls = (photos ?? []).map((photo) => {
-		const { data: urlData } = locals.supabase.storage
-			.from('progress-photos')
-			.getPublicUrl(photo.image_path);
-		return { ...photo, image_url: urlData?.publicUrl ?? '' };
-	});
+	const photosWithUrls = await Promise.all(
+		(photos ?? []).map(async (photo) => {
+			const { data: urlData } = await locals.supabase.storage
+				.from('progress-photos')
+				.createSignedUrl(photo.image_path, 60 * 60);
+			return { ...photo, image_url: urlData?.signedUrl ?? '' };
+		})
+	);
 
 	return { photos: photosWithUrls };
 };

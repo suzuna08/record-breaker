@@ -114,7 +114,7 @@
 </script>
 
 <svelte:head>
-	<title>New Workout — Gym Anatomy Tracker</title>
+	<title>New Workout — Record Breaker</title>
 </svelte:head>
 
 <div class="mx-auto max-w-6xl px-4 py-8">
@@ -122,8 +122,8 @@
 		<Button href="/workouts" variant="ghost" size="sm">← Back</Button>
 	</div>
 
-	<h1 class="mb-2 text-3xl font-bold text-zinc-50">New Workout</h1>
-	<p class="mb-8 text-sm text-zinc-400">新增訓練 — Log your exercises and see targeted muscles</p>
+	<h1 class="mb-2 text-3xl font-bold text-white">New Workout</h1>
+	<p class="mb-8 text-sm text-white/40">新增訓練 — Log your exercises and see targeted muscles</p>
 
 	<ErrorBanner visible={!!errorMsg} message={errorMsg} />
 
@@ -138,15 +138,15 @@
 
 			<!-- Exercise logs -->
 			<div>
-				<h2 class="mb-3 text-lg font-semibold text-zinc-200">Exercises</h2>
+				<h2 class="mb-3 text-lg font-semibold text-white/70">Exercises</h2>
 				<div class="space-y-4">
 					{#each logs as log, i}
-						<div class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+						<div class="panel-glass p-4">
 							<div class="mb-3 flex items-center justify-between">
-								<span class="text-xs font-medium text-zinc-500">Exercise #{i + 1}</span>
+								<span class="text-xs font-medium text-white/25">Exercise #{i + 1}</span>
 								{#if logs.length > 1}
 									<button
-										class="text-xs text-red-400 hover:text-red-300"
+										class="text-xs text-red-400/60 hover:text-red-300"
 										onclick={() => removeLog(i)}
 									>
 										Remove
@@ -156,11 +156,11 @@
 
 							<div class="space-y-3">
 								<div>
-									<label class="mb-1.5 block text-sm font-medium text-zinc-300">Exercise</label>
+									<label class="mb-1.5 block text-sm font-medium text-white/25">Exercise</label>
 									<select
 										bind:value={log.exercise_id}
 										onchange={() => handleExerciseChange(i)}
-										class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
+										class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white focus:border-sakura-400 focus:ring-1 focus:ring-sakura-400 focus:outline-none"
 									>
 										<option value="">Select exercise...</option>
 										{#each data.exercises as exercise}
@@ -174,7 +174,7 @@
 									{#if muscles.length > 0}
 										<div class="flex flex-wrap gap-1">
 											{#each muscles as m}
-												<span class="rounded-full bg-brand-600/20 px-2 py-0.5 text-xs text-brand-300">
+												<span class="rounded-full bg-sakura-500/15 px-2 py-0.5 text-xs text-sakura-300">
 													{m.name_en}
 												</span>
 											{/each}
@@ -184,20 +184,20 @@
 
 								<div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
 									<div>
-										<label class="mb-1 block text-xs text-zinc-400">Sets</label>
-										<input type="number" bind:value={log.sets} min="1" class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:outline-none" />
+										<label class="mb-1 block text-xs text-white/30">Sets</label>
+										<input type="number" bind:value={log.sets} min="1" class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white focus:border-sakura-400 focus:outline-none" />
 									</div>
 									<div>
-										<label class="mb-1 block text-xs text-zinc-400">Reps</label>
-										<input type="number" bind:value={log.reps} min="1" class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:outline-none" />
+										<label class="mb-1 block text-xs text-white/30">Reps</label>
+										<input type="number" bind:value={log.reps} min="1" class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white focus:border-sakura-400 focus:outline-none" />
 									</div>
 									<div>
-										<label class="mb-1 block text-xs text-zinc-400">Weight (kg)</label>
-										<input type="number" bind:value={log.weight} min="0" step="0.5" class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:outline-none" />
+										<label class="mb-1 block text-xs text-white/30">Weight (kg)</label>
+										<input type="number" bind:value={log.weight} min="0" step="0.5" class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white focus:border-sakura-400 focus:outline-none" />
 									</div>
 									<div>
-										<label class="mb-1 block text-xs text-zinc-400">RPE</label>
-										<input type="text" bind:value={log.rpe} placeholder="6-10" class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 focus:border-brand-500 focus:outline-none" />
+										<label class="mb-1 block text-xs text-white/30">RPE</label>
+										<input type="text" bind:value={log.rpe} placeholder="6-10" class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white placeholder-white/20 focus:border-sakura-400 focus:outline-none" />
 									</div>
 								</div>
 
@@ -205,7 +205,7 @@
 									type="text"
 									bind:value={log.note}
 									placeholder="Note (optional)"
-									class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-brand-500 focus:outline-none"
+									class="w-full rounded-lg border border-white/10 bg-game-900/40 px-3 py-2 text-sm text-white placeholder-white/20 focus:border-sakura-400 focus:outline-none"
 								/>
 							</div>
 						</div>
@@ -223,11 +223,11 @@
 
 		<!-- Mini anatomy showing all muscles in this session -->
 		<div class="hidden lg:block">
-			<div class="sticky top-20 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
-				<p class="mb-3 text-center text-xs font-medium uppercase tracking-wider text-zinc-500">Muscles Targeted</p>
+			<div class="panel-glass sticky top-20 p-4">
+				<p class="mb-3 text-center text-xs font-medium uppercase tracking-wider text-white/30">Muscles Targeted</p>
 				<AnatomySvg highlightedMeshKeys={allSelectedMeshKeys} />
 				{#if allSelectedMeshKeys.length === 0}
-					<p class="mt-2 text-center text-xs text-zinc-600">Select exercises to see muscles</p>
+					<p class="mt-2 text-center text-xs text-white/25">Select exercises to see muscles</p>
 				{/if}
 			</div>
 		</div>
